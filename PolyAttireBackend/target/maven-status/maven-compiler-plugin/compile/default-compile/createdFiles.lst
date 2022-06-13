@@ -1,0 +1,13 @@
+com\polyattire\ecommerce\entity\Product.class
+com\polyattire\ecommerce\entity\Image.class
+com\polyattire\ecommerce\entity\ProductDetailed.class
+com\polyattire\ecommerce\PolyattireApplication.class
+com\polyattire\ecommerce\dao\ProductRepository.class
+com\polyattire\ecommerce\bean\ProductBean.class
+com\polyattire\ecommerce\controller\EcommerceController.class
+com\polyattire\ecommerce\service\ServiceImpl.class
+com\polyattire\ecommerce\service\Service.class
+com\polyattire\ecommerce\entity\ProductCategory.class
+com\polyattire\ecommerce\dao\ImageRepository.class
+com\polyattire\ecommerce\dao\ProductCategoryRepository.class
+com\polyattire\ecommerce\dao\ProductDetailedRepository.class
