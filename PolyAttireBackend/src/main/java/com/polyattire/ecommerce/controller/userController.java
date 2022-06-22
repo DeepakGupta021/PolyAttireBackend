@@ -32,6 +32,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.polyattire.ecommerce.entity.EcomRole;
 import com.polyattire.ecommerce.entity.EcomUser;
 import com.polyattire.ecommerce.service.UserService;
+import com.polyattire.ecommerce.utility.AES;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -46,6 +47,9 @@ public class userController {
 	
 	@Value("${encoder.secret.value}")
 	private String secret;
+	
+	@Value("${aes.secret.value}")
+	private String tokenAESKey;
 
 	@GetMapping("/api/users")
 	public ResponseEntity<List<EcomUser>> getUsers()
@@ -79,6 +83,7 @@ public class userController {
 		if(authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
 			try {
 				String refresh_token = authorizationHeader.substring("Bearer ".length());
+				refresh_token = AES.decrypt(refresh_token, tokenAESKey);
 				Algorithm algorithm =  Algorithm.HMAC256(secret.getBytes());
 				JWTVerifier verifier = JWT.require(algorithm).build();
 				DecodedJWT decodedJWT = verifier.verify(refresh_token);
@@ -92,8 +97,8 @@ public class userController {
 						.withExpiresAt(new Date(System.currentTimeMillis() +  10 * 60 * 1000))
 						.sign(algorithm);
 				Map<String, String> tokens = new HashMap<String, String>();
-				tokens.put("access_token", access_token);
-				tokens.put("refresh_token", refresh_token);
+				tokens.put("access_token", AES.encrypt(access_token, tokenAESKey));
+				tokens.put("refresh_token", AES.encrypt(refresh_token, tokenAESKey));
 				response.setContentType("application/json");
 				new ObjectMapper().writeValue(response.getOutputStream(), tokens);
 			

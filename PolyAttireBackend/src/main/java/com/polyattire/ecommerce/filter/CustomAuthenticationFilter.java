@@ -21,19 +21,21 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.polyattire.ecommerce.utility.AES;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
-
+	
 	private final AuthenticationManager authenticationManager;
-	
 	private final String secret;
+	private final String tokenAESKey;
 	
-	public CustomAuthenticationFilter(AuthenticationManager authenticationManager,String secret) {
+	public CustomAuthenticationFilter(AuthenticationManager authenticationManager,String secret,String tokenAESKey) {
 		this.authenticationManager =  authenticationManager;
 		this.secret = secret;
+		this.tokenAESKey = tokenAESKey;
 	}
 	
 	@Override
@@ -66,6 +68,9 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 				.withExpiresAt(new Date(System.currentTimeMillis() + 30 * 60 * 1000))
 				.sign(algorithm);
 		
+		
+		access_token = AES.encrypt(access_token, tokenAESKey);
+		refresh_token = AES.encrypt(refresh_token, tokenAESKey);
 //		response.setHeader("access_token", access_token);
 //		response.setHeader("refresh_token", refresh_token);
 		
